@@ -112,3 +112,6 @@ C:\Users\rushabh_patel\Downloads\DotnetAPI\DotnetAPI\obj\Debug\net9.0\refint\Dot
 C:\Users\rushabh_patel\Downloads\DotnetAPI\DotnetAPI\obj\Debug\net9.0\DotnetAPI.pdb
 C:\Users\rushabh_patel\Downloads\DotnetAPI\DotnetAPI\obj\Debug\net9.0\DotnetAPI.genruntimeconfig.cache
 C:\Users\rushabh_patel\Downloads\DotnetAPI\DotnetAPI\obj\Debug\net9.0\ref\DotnetAPI.dll
+C:\Users\rushabh_patel\Downloads\DotnetAPI\DotnetAPI\bin\Debug\net9.0\UserJobInfo.json
+C:\Users\rushabh_patel\Downloads\DotnetAPI\DotnetAPI\bin\Debug\net9.0\Users.json
+C:\Users\rushabh_patel\Downloads\DotnetAPI\DotnetAPI\bin\Debug\net9.0\UserSalary.json
