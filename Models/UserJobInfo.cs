@@ -1,5 +1,5 @@
 
-namespace DotnetAPI{
+namespace DotnetAPI.Models{
 public partial class UserJobInfo
 {
     public int UserId { get; set; }
