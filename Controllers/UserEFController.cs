@@ -49,6 +49,7 @@ public class UserEFController : ControllerBase
           userDb.Email = user.Email; 
           userDb.Gender = user.Gender; 
           userDb.Active = user.Active; 
+          _entityFramework.Users.Add(userDb); 
           
           if(_entityFramework.SaveChanges() > 0)
             {
