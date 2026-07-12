@@ -116,4 +116,64 @@ public class UserController : ControllerBase
 
         throw new Exception("Failed to Delete User");
     }
+
+    //User Salary
+    [HttpGet("UserSalary")]
+    public IEnumerable<UserSalary> GetUserSalary()
+    {
+        string sql= @"SELECT UserSalary.UserId,UserSalary.Salary 
+                            FROM TutorialAppSchema.UserSalary";
+        IEnumerable<UserSalary> usersSalary = _dapper.LoadData<UserSalary>(sql);
+        return usersSalary;
+    }
+
+    [HttpGet("UserSalary/{userId}")]
+    public UserSalary GetUserSalary(int userId)
+    {
+        string sql = @"SELECT UserSalary.UserId,UserSalary.Salary 
+                            FROM TutorialAppSchema.UserSalary WHERE UserId=" + userId.ToString();
+        UserSalary userSalary =  _dapper.LoadDataSingle<UserSalary>(sql);
+        return userSalary;
+    }
+
+    [HttpPost("UserSalary")]
+    public IActionResult AddUserSalary(UserSalary userSalary)
+    {
+        string sql = @"
+            INSERT INTO TutorialAppSchema.UserSalary
+            ([UserId]
+            ,[Salary])
+            VALUES(" +
+                userSalary.UserId.ToString() +
+                ", " + userSalary.Salary.ToString() +
+                ")";
+        if (_dapper.ExecuteSql(sql))
+        {
+            return Ok();
+        }
+        throw new Exception("Failed to add user salary");
+    }
+
+    [HttpDelete("UserSalary/{userId}")]
+    public IActionResult DeleteUserSalary(int userId)
+    {
+        string sql = @"DELETE FROM TutorialAppSchema.UserSalary WHERE UserId=" +userId.ToString();
+
+        if (_dapper.ExecuteSql(sql))
+        {
+            return Ok();
+        }
+        throw new Exception("Failed to delete User Salary");
+    }
+
+    [HttpPut("UserSalary")]
+    public IActionResult PutUserSalary(UserSalary userSalary)
+    {
+        string sql = @"UPDATE TutorialAppSchema.UserSalary SET Salary="+userSalary.Salary+" WHERE UserId="+ userSalary.UserId;
+        if (_dapper.ExecuteSql(sql))
+        {
+            return Ok();
+        }
+        throw new Exception("Failed to update User Salary");
+    }
 }
