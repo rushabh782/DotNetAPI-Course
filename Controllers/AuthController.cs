@@ -54,7 +54,12 @@ namespace DotnetAPI.Controllers
                   
                   sqlParameters.Add(passwordSaltParameter);
                   sqlParameters.Add(passwordHashParameter);
+
+                  if(_dapper.ExecuteSqlWithParameters(sqlAddAuth, sqlParameters))
+                    {
                     return Ok();
+                    }
+                    throw new Exception("Failed to register the user");
                 }
                 throw new Exception("User with this email already exists");
             }
