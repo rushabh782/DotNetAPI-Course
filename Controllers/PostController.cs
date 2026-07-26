@@ -1,4 +1,5 @@
 using DotnetAPI.Data;
+using DotnetAPI.Dtos;
 using DotnetAPI.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -7,7 +8,7 @@ namespace DotnetAPI.Controllers
 {
     [Authorize]
     [ApiController]
-    [Route("controller")]
+    [Route("[controller]")]
     public class PostController : ControllerBase
     {
         private readonly DataContextDapper _dapper;
@@ -45,7 +46,7 @@ namespace DotnetAPI.Controllers
             return postSingle; 
         }
         //Multiple posts by user
-        [HttpGet("Posts/{userId}")]
+        [HttpGet("PostsByUser/{userId}")]
         public IEnumerable<Post> GetPostsByUser(int userId)
         {
             string sql = @"SELECT  PostId
@@ -57,6 +58,8 @@ namespace DotnetAPI.Controllers
             FROM TutorialAppSchema.Posts WHERE UserId =" + userId.ToString();
             return _dapper.LoadData<Post>(sql);
         }
+
+        //Get Posts for the currently authenticated user
         [HttpGet("MyPosts")]
         public IEnumerable<Post> GetMyPosts()
         {
@@ -68,6 +71,59 @@ namespace DotnetAPI.Controllers
                 ,PostUpdated
             FROM TutorialAppSchema.Posts WHERE UserId =" + this.User.FindFirst("userId")?.Value;
             return _dapper.LoadData<Post>(sql);
+        }
+
+        [HttpPost("Post")]
+        public IActionResult AddPost(PostToAddDto postToAdd)
+        {
+            string sql = @"INSERT INTO TutorialAppSchema.Posts(
+                 UserId
+                ,PostTitle
+                ,PostContent
+                ,PostCreated
+                ,PostUpdated) VALUES("+ this.User.FindFirst("userId")?.Value
+                 +",'"+ postToAdd.PostTitle
+                 +"','"+postToAdd.PostContent
+                 +"', GETDATE(), GETDATE() )";
+
+            if (_dapper.ExecuteSql(sql))
+            {
+                return Ok();
+            }
+
+            throw new Exception("Failed to create new post!");
+        }
+        [HttpPut("Post")]
+        public IActionResult EditPost(PostToEditDto postToEdit)
+        {
+            string sql = @"UPDATE TutorialAppSchema.Posts 
+                SET PostContent = '"+ postToEdit.PostContent +
+                "', PostTitle = '"+ postToEdit.PostTitle +
+                "', PostUpdated = GETDATE() WHERE PostId ="+postToEdit.PostId.ToString() +
+                "AND UserId = " + this.User.FindFirst("userId")?.Value;
+               
+
+            if (_dapper.ExecuteSql(sql))
+            {
+                return Ok();
+            }
+
+            throw new Exception("Failed to edit post!");
+        }
+
+        [HttpDelete("Post/{postId}")]
+        public IActionResult DeletePost(int postId)
+        {
+            //only authenticated user(i.e- user who created post will only be able to delete it)
+            string sql = @"DELETE FROM TutorialAppSchema.Posts
+            WHERE PostId = "+postId.ToString()+ 
+            "AND UserId = " + this.User.FindFirst("userId")?.Value;;
+
+            if (_dapper.ExecuteSql(sql))
+            {
+                return Ok();
+            }
+            throw new Exception("Failed to delete Post");
         }
     }
 }
