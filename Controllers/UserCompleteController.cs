@@ -23,12 +23,6 @@ public class UserCompleteController : ControllerBase
     {
         return _dapper.LoadDataSingle<DateTime>("SELECT GETDATE()");
     }
-    [HttpGet("test/{testValue}")]
-    public string[] Test(string testValue)
-    {
-        string[] responseArray = new string[]{"test1","test2",testValue};
-        return responseArray;
-    }
 
     [HttpGet("GetUsers/{userId}/{isActive}")]
     public IEnumerable<UserComplete> GetUsers(int userId,bool isActive)
@@ -75,7 +69,7 @@ public class UserCompleteController : ControllerBase
     [HttpDelete("DeleteUser/{userId}")]
     public IActionResult DeleteUser(int userId)
     {
-        string sql = @"DELETE FROM TutorialAppSchema.Users where UserId=" +userId.ToString();
+        string sql = @"EXEC TutorialAppSchema.spUser_Delete @UserId="+userId.ToString();
 
         Console.WriteLine(sql);
 
@@ -86,19 +80,5 @@ public class UserCompleteController : ControllerBase
 
         throw new Exception("Failed to Delete User");
     }
-
-
-    [HttpDelete("UserSalary/{userId}")]
-    public IActionResult DeleteUserSalary(int userId)
-    {
-        string sql = @"DELETE FROM TutorialAppSchema.UserSalary WHERE UserId=" +userId.ToString();
-
-        if (_dapper.ExecuteSql(sql))
-        {
-            return Ok();
-        }
-        throw new Exception("Failed to delete User Salary");
-    }
-
 
 }
