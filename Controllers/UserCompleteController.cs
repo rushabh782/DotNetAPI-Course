@@ -51,40 +51,19 @@ public class UserCompleteController : ControllerBase
 
  
 
-    [HttpPost("AddUser")]
-    public IActionResult AddUser(UserToAddDto user)
+    [HttpPut("UpsertUser")]
+    public IActionResult UpsertUser(UserComplete user)
     {
-        string sql = @"
-            INSERT INTO TutorialAppSchema.Users
-            ([FirstName]
-            ,[LastName]
-            ,[Email]
-            ,[Gender]
-            ,[Active])
-            VALUES(" +
-                "'" + user.FirstName +
-                "', '" + user.LastName + 
-                "','" + user.Email +
-                "','" + user.Gender +
-                "','" + user.Active+
-                "')";
-       if (_dapper.ExecuteSql(sql))
-        {
-            return Ok();
-        }
-        throw new Exception("Failed to add user");
-    }
-
-    [HttpPut("EditUser")]
-    public IActionResult EditUser(User user)
-    {
-        string sql =@"UPDATE TutorialAppSchema.Users
-        SET  [FirstName]='" + user.FirstName +
-         "', [LastName]='" + user.LastName + 
-         "',[Email]='" + user.Email +
-         "',[Gender]='" + user.Gender +
-         "',[Active]='" + user.Active+
-         "' WHERE UserId=" + user.UserId;
+        string sql =@"EXEC TutorialAppSchema.spUser_Upsert
+           @FirstName='" + user.FirstName +
+         "', @LastName='" + user.LastName + 
+         "',@Email='" + user.Email +
+         "',@Gender='" + user.Gender +
+         "',@Active='" + user.Active+
+         "',@JobTitle='" + user.JobTitle+
+         "',@Department='" + user.Department+
+         "',@Salary='" + user.Salary+
+         "',@UserId=" + user.UserId;
 
         if (_dapper.ExecuteSql(sql))
         {
@@ -109,24 +88,6 @@ public class UserCompleteController : ControllerBase
     }
 
 
-    [HttpPost("UserSalary")]
-    public IActionResult AddUserSalary(UserSalary userSalary)
-    {
-        string sql = @"
-            INSERT INTO TutorialAppSchema.UserSalary
-            ([UserId]
-            ,[Salary])
-            VALUES(" +
-                userSalary.UserId.ToString() +
-                ", " + userSalary.Salary.ToString() +
-                ")";
-        if (_dapper.ExecuteSql(sql))
-        {
-            return Ok();
-        }
-        throw new Exception("Failed to add user salary");
-    }
-
     [HttpDelete("UserSalary/{userId}")]
     public IActionResult DeleteUserSalary(int userId)
     {
@@ -139,14 +100,5 @@ public class UserCompleteController : ControllerBase
         throw new Exception("Failed to delete User Salary");
     }
 
-    [HttpPut("UserSalary")]
-    public IActionResult PutUserSalary(UserSalary userSalary)
-    {
-        string sql = @"UPDATE TutorialAppSchema.UserSalary SET Salary="+userSalary.Salary+" WHERE UserId="+ userSalary.UserId;
-        if (_dapper.ExecuteSql(sql))
-        {
-            return Ok();
-        }
-        throw new Exception("Failed to update User Salary");
-    }
+
 }
